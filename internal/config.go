@@ -2,13 +2,16 @@ package internal
 
 import (
 	"fmt"
+	"net/url"
 	"os"
 	"strconv"
+	"strings"
 )
 
 type Config struct {
 	Api       Api
 	serverUrl string
+	urls      []url.URL
 }
 
 type Api struct {
@@ -30,11 +33,33 @@ func BuildConfig() (Config, []string) {
 			Port: getEnv(env[int]{key: "PORT", defaultValue: 3000}),
 		},
 		serverUrl: getEnv(env[string]{key: "SERVER_URL"}),
+		urls:      getUrls(),
 	}, violations
 }
 
 func (apiConfig Api) Addr() string {
 	return fmt.Sprintf(":%d", apiConfig.Port)
+}
+
+func getUrls() []url.URL {
+	var rawUrls = getEnv(env[string]{key: "URLS", defaultValue: " "})
+	if rawUrls == " " {
+		return make([]url.URL, 0)
+	}
+
+	var urls = strings.Split(rawUrls, ";")
+	var actualUrls []url.URL
+
+	for _, entry := range urls {
+		url_, err := url.ParseRequestURI(entry)
+		if err == nil {
+			actualUrls = append(actualUrls, *url_)
+		} else {
+			violations = append(violations, fmt.Sprintf("'%s' is not a valid uri", entry))
+		}
+	}
+
+	return actualUrls
 }
 
 func getEnv[T int | string](_env env[T]) T {

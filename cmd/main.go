@@ -15,6 +15,8 @@ func main() {
 		log.Fatal(violations)
 	}
 
+	go internal.ScheduleScrapping(config)
+
 	var router = api.BuildRouter()
 	log.Info("Starting api server @", config.Api.Addr())
 	log.Fatal(http.ListenAndServe(config.Api.Addr(), router))

@@ -10,7 +10,7 @@ import (
 
 type Config struct {
 	Api       Api
-	serverUrl string
+	serverUrl url.URL
 	urls      []url.URL
 }
 
@@ -18,7 +18,7 @@ type Api struct {
 	Port int
 }
 
-type env[T int | string] struct {
+type env[T int | string | url.URL] struct {
 	key          string
 	defaultValue T
 }
@@ -32,7 +32,7 @@ func BuildConfig() (Config, []string) {
 		Api: Api{
 			Port: getEnv(env[int]{key: "PORT", defaultValue: 3000}),
 		},
-		serverUrl: getEnv(env[string]{key: "SERVER_URL"}),
+		serverUrl: getEnv(env[url.URL]{key: "SERVER_URL"}),
 		urls:      getUrls(),
 	}, violations
 }
@@ -62,7 +62,7 @@ func getUrls() []url.URL {
 	return actualUrls
 }
 
-func getEnv[T int | string](_env env[T]) T {
+func getEnv[T int | string | url.URL](_env env[T]) T {
 	var rawValue = os.Getenv(_env.key)
 	var value any = *new(T)
 
@@ -84,6 +84,13 @@ func getEnv[T int | string](_env env[T]) T {
 
 	case string:
 		value = rawValue
+
+	case url.URL:
+		var tmpUrl *url.URL
+		tmpUrl, err = url.ParseRequestURI(rawValue)
+		if tmpUrl != nil {
+			value = *tmpUrl
+		}
 	}
 
 	if err != nil {

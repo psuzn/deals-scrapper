@@ -18,16 +18,16 @@ var headers = struct {
 	contentType: "Content-Type",
 }
 
-var contentTypes = struct {
-	json string
+var ContentTypes = struct {
+	Json string
 }{
-	json: "application/json",
+	Json: "application/json",
 }
 
 func SendData(w http.ResponseWriter, r *http.Request, body any) {
 	sendHttpRepose(w, r, httpResponse[any]{
 		body:    body,
-		headers: map[string]string{headers.contentType: contentTypes.json},
+		headers: map[string]string{headers.contentType: ContentTypes.Json},
 	},
 	)
 }

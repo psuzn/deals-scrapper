@@ -27,27 +27,27 @@ func TestBuildConfig(t *testing.T) {
 	})
 
 	t.Run("default value should be auto filled", func(t *testing.T) {
-		t.Setenv("SERVER_URL", "test_url")
+		t.Setenv("SERVER_URL", "https://test.com")
 		t.Setenv("PORT", "")
 
 		config, violations := BuildConfig()
 
 		assert.Empty(t, violations)
 		assert.Equal(t, 3000, config.Api.Port)
-		assert.Equal(t, "test_url", config.serverUrl)
+		assert.Equal(t, "https://test.com", config.serverUrl.String())
 		assert.Equal(t, make([]url.URL, 0), config.urls)
 	})
 
 	t.Run("correct value should be  filled", func(t *testing.T) {
 		t.Setenv("PORT", "3333")
-		t.Setenv("SERVER_URL", "test_url")
+		t.Setenv("SERVER_URL", "https://test.com")
 		t.Setenv("URLS", "https://test.com;https://test2.com")
 
 		config, violations := BuildConfig()
 
 		assert.Empty(t, violations)
 		assert.Equal(t, 3333, config.Api.Port)
-		assert.Equal(t, "test_url", config.serverUrl)
+		assert.Equal(t, "https://test.com", config.serverUrl.String())
 		assert.Equal(t, "https://test.com", config.urls[0].String())
 		assert.Equal(t, "https://test2.com", config.urls[1].String())
 	})

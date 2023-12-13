@@ -33,3 +33,7 @@ go.work
 *.DS_Store
 .AppleDouble
 .LSOverride
+
+## build artifacts
+build
+build/*

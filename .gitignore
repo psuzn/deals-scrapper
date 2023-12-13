@@ -19,3 +19,17 @@
 
 # Go workspace file
 go.work
+
+
+## things under .idea
+.idea
+.idea/*.xml
+.idea/.*
+
+# env vars
+.env
+
+### macOS ###
+*.DS_Store
+.AppleDouble
+.LSOverride

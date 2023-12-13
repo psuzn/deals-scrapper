@@ -1,0 +1,10 @@
+
+#### liveness
+GET {{BASE_URL}}/health/liveness
+Accept: application/json
+
+### readiness
+GET {{BASE_URL}}/health/readiness
+Accept: application/json
+
+

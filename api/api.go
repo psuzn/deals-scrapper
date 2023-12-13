@@ -1,10 +1,17 @@
 package api
 
 import (
-	"github.com/go-chi/chi/v5/middleware"
-	log "github.com/sirupsen/logrus"
+	"github.com/go-chi/chi/v5"
 )
 
-var Logger = middleware.RequestLogger(&middleware.DefaultLogFormatter{
-	Logger: log.New(),
-})
+func setupRoutes(router chi.Router) {
+	router.Route("/health", healthApi)
+}
+
+func BuildRouter() *chi.Mux {
+	var router = chi.NewRouter()
+	setupMiddlewares(router)
+	setupRoutes(router)
+
+	return router
+}

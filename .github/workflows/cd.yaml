@@ -1,0 +1,65 @@
+name: deployment
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - '*'
+jobs:
+  build_image:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: extractions/setup-just@v1
+
+      - uses: actions/setup-go@v4
+        with:
+          go-version: '>=1.21.5'
+
+      - name: Run Tests
+        run: go test ./... -v
+
+      - uses: extractions/setup-just@v1
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+
+      - name: Build and publish image
+        run: just build-push-image
+
+  deploy_on_k8:
+    runs-on: ubuntu-latest
+    needs: build_image
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: extractions/setup-just@v1
+
+      - uses: azure/setup-helm@v3
+
+      - uses: azure/setup-kubectl@v3
+        id: install
+        name: Setup kubectl client
+
+      - name: create KUBECONFIG
+        run: |
+          echo ${{ secrets.KUBE_CONFIG }} | base64 --decode > kube-config;
+          chmod 600 kube-config;
+          echo "KUBECONFIG=$(pwd)/kube-config" >> "$GITHUB_ENV"
+
+      - name: Deploy on k8
+        run: |
+          kubectl config current-context;
+          just helm-upgrade;
+        env:
+          SERVER_URL: ${{ secrets.SERVER_URL }}
+          URLS: ${{ secrets.URLS }}
+
+

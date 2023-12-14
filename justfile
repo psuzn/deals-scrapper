@@ -9,6 +9,9 @@ deployerServiceAccountName:= "deals-extractor-deployer"
 tag := "$(git rev-parse --short HEAD)"
 imageRepo := "ghcr.io/psuzn/deals-scrapper"
 
+run:
+    go run cmd/main.go
+
 build-push-image imageTag=tag:
     #!/usr/bin/env sh
     tags="{{tag}},latest"

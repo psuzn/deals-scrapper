@@ -1,5 +1,8 @@
 # Deals Scrapper
 
+[![deployment](https://github.com/psuzn/deals-scrapper/actions/workflows/cd.yaml/badge.svg)](https://github.com/psuzn/deals-scrapper/actions/workflows/cd.yaml)
+[![check verify](https://github.com/psuzn/deals-scrapper/actions/workflows/ci.yaml/badge.svg)](https://github.com/psuzn/deals-scrapper/actions/workflows/ci.yaml)
+
 Small utility service as part of [Play Deals](https://github.com/psuzn/Play-Deals) to find deals from the web.
 
 ## Development

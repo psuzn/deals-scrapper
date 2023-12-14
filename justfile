@@ -12,8 +12,9 @@ imageRepo := "ghcr.io/psuzn/deals-scrapper"
 build-push-image imageTag=tag:
     #!/usr/bin/env sh
     tags="{{tag}},latest"
-    docker build -t {{imageRepo}}:$tags
-
+    docker build -t {{imageRepo}}:{{tag}} -t {{imageRepo}}:latest .
+    docker push {{imageRepo}}:{{tag}}
+    docker push {{imageRepo}}:latest
     echo Pushed tags $tags
 
 ns-create:
@@ -31,10 +32,10 @@ helm-upgrade imageTag=tag:
     #!/usr/bin/env sh
     echo "Deploying {{imageRepo}}:{{imageTag}} to $(kubectl config current-context)"
     helm upgrade {{deployment}} --create-namespace \
-        --install --namespace {{namespace}} ./deployment/helm/backend \
+        --install --namespace {{namespace}} ./deployment/helm/scrapper \
         --set image.tag={{imageTag}} \
-        --set image.repository={{imageRepo}}
-        --set serverUrl=$SERVER_URL
+        --set image.repository={{imageRepo}} \
+        --set serverUrl=$SERVER_URL \
         --set urls=$URLS
 
 # creates a service account and token for a deployer

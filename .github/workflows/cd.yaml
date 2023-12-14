@@ -20,7 +20,7 @@ jobs:
           go-version: '>=1.21.5'
 
       - name: Run Tests
-        run: just test
+        run:  go test ./... -v
 
       - uses: extractions/setup-just@v1
 

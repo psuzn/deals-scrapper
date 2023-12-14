@@ -1,4 +1,4 @@
-name: play-deals-backend 1.0 CD
+name: deployment
 on:
   workflow_dispatch:
   push:

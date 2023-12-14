@@ -1,10 +1,10 @@
 version: '3.1'
 
 services:
-  play-deals-backend:
+  scrapper:
     build:
       dockerfile: Dockerfile
-    image: play-deals-backend
+    image: scrapper
     env_file:
       - .env
     ports:

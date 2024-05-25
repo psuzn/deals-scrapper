@@ -12,8 +12,6 @@ func ScheduleScrapping(config Config) {
 	c := buildScrapPipeline(config)
 
 	for {
-		time.Sleep(time.Hour * 1)
-
 		log.Info("starting scrap run")
 
 		for _, url := range config.urls {
@@ -24,6 +22,7 @@ func ScheduleScrapping(config Config) {
 		}
 
 		log.Info("scrap run ended")
+		time.Sleep(time.Hour * 1)
 	}
 }
 

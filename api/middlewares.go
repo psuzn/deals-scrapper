@@ -3,15 +3,22 @@ package api
 import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
-	log "github.com/sirupsen/logrus"
+	"net/http"
+	"strings"
 )
 
-var loggerMiddleware = middleware.RequestLogger(&middleware.DefaultLogFormatter{
-	Logger: log.New(),
-})
+func LoggerMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if strings.Contains(r.URL.Path, "/health") {
+			next.ServeHTTP(w, r)
+			return
+		}
+		middleware.Logger(next).ServeHTTP(w, r)
+	})
+}
 
 func setupMiddlewares(router chi.Router) {
-	router.Use(loggerMiddleware)
+	router.Use(LoggerMiddleware)
 	router.Use(middleware.StripSlashes)
 	router.Use(middleware.RequestID)
 }
